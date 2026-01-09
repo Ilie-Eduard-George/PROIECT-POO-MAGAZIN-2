@@ -360,6 +360,6 @@ int main() {
             cout << "Optiune invalida.\n";
         }
     }
-
     return 0;
 }
+
