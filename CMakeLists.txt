@@ -1,81 +1,53 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.10)
 
-# NOTE: update executable name in .github/workflows/cmake.yml:25 when changing executable name in this file
-# for now, the project name is used as the executable name
 set(MAIN_PROJECT_NAME "oop")
-set(MAIN_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}")
+project(${MAIN_PROJECT_NAME} LANGUAGES CXX)
 
-
-project(${MAIN_PROJECT_NAME})
-# set(CMAKE_PROJECT_VERSION_MAJOR 0)
-# set(CMAKE_PROJECT_VERSION_MINOR 0)
-# set(CMAKE_PROJECT_VERSION_PATCH 1)
-
-set(CMAKE_CXX_STANDARD 23)
+# Use C++17 for compatibility with assignment requirements
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-include(cmake/Options.cmake)
-include(cmake/CompilerFlags.cmake)
-include(cmake/CopyHelper.cmake)
-
-###############################################################################
-
-# external dependencies with FetchContent
-# include(FetchContent)
-#
-# set(FETCHCONTENT_QUIET OFF)
-# set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
-#
-# NOTE: Also update env vars used for caching in
-#         - .github/actions/configure-cmake/action.yml
-#         - .github/workflows/cmake.yml
-# FetchContent_Declare(
-#         SomeLib
-#         GIT_REPOSITORY https://github.com/<SomeUser>/<SomeLib>.git
-#         GIT_TAG        <some_git_hash> # <which tag/branch @ <some_date>>
-#         GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
-# )
-#
-# FetchContent_MakeAvailable(SomeLib)
-
-###############################################################################
-
-# external dependencies with find_package
-
-# find_package(Threads REQUIRED)
-
-###############################################################################
-
-# NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
-add_executable(${MAIN_EXECUTABLE_NAME}
-    main.cpp
-)
-
-# NOTE: Add all defined targets (e.g. executables, libraries, etc. )
-# NOTE: RUN_SANITIZERS is optional, if it's not present it will default to true
-set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
-# set_compiler_flags(TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${FOO} ${BAR})
-# where ${FOO} and ${BAR} represent additional executables or libraries
-# you want to compile with the set compiler flags
-
-###############################################################################
-
-# use SYSTEM so cppcheck and clang-tidy do not report warnings from these directories
-# target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
-# target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
-# target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
-# target_link_libraries(${MAIN_EXECUTABLE_NAME} <SomeLib>)
-
-###############################################################################
-
-# copy binaries to "bin" folder; these are uploaded as artifacts on each release
-# DESTINATION_DIR is set as "bin" in cmake/Options.cmake:6
-install(TARGETS ${MAIN_EXECUTABLE_NAME} DESTINATION ${DESTINATION_DIR})
-if(APPLE)
-    install(FILES launcher.command DESTINATION ${DESTINATION_DIR})
+# include helper cmake files if you still need them
+if(EXISTS "${CMAKE_SOURCE_DIR}/cmake/Options.cmake")
+  include(cmake/Options.cmake)
+endif()
+if(EXISTS "${CMAKE_SOURCE_DIR}/cmake/CompilerFlags.cmake")
+  include(cmake/CompilerFlags.cmake)
+endif()
+if(EXISTS "${CMAKE_SOURCE_DIR}/cmake/CopyHelper.cmake")
+  include(cmake/CopyHelper.cmake)
 endif()
 
-copy_files(FILES tastatura.txt COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
-# copy_files(FILES tastatura.txt config.json DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
-# copy_files(DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+# add include directory so headers are found
+target_include_directories(${MAIN_PROJECT_NAME} SYSTEM PRIVATE ${CMAKE_SOURCE_DIR}/include)
+# or globally:
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
+# collect all .cpp sources from src/
+file(GLOB_RECURSE PROJECT_SOURCES
+     "${CMAKE_SOURCE_DIR}/src/*.cpp"
+)
+
+# if you still have a top-level main.cpp, either move it to src/ or add it explicitly:
+# list(APPEND PROJECT_SOURCES "${CMAKE_SOURCE_DIR}/main.cpp")
+
+add_executable(${MAIN_PROJECT_NAME} ${PROJECT_SOURCES})
+
+# optional: set compiler flags helper if present
+if(COMMAND set_compiler_flags)
+  set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_PROJECT_NAME})
+endif()
+
+# install and copy helpers (keep if CopyHelper.cmake exists)
+if(COMMAND install)
+  install(TARGETS ${MAIN_PROJECT_NAME} DESTINATION ${DESTINATION_DIR})
+  if(APPLE)
+    install(FILES launcher.command DESTINATION ${DESTINATION_DIR})
+  endif()
+endif()
+
+# copy extra files (if CopyHelper.cmake defines copy_files)
+if(COMMAND copy_files)
+  copy_files(FILES tastatura.txt COPY_TO_DESTINATION TARGET_NAME ${MAIN_PROJECT_NAME})
+endif()
