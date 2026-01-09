@@ -1,28 +1,63 @@
-#pragma once
-#include "StocProdus.h"
-#include <vector>
-#include <map>
-#include <optional>
+#include "Inventory.h"
+#include <algorithm>
+using namespace std;
 
-class Inventory {
-private:
-    std::vector<StocProdus> items;
-    std::map<std::string,int> indexByModel;
-public:
-    Inventory() = default;
+void Inventory::addItem(const StocProdus& s) {
+    for (auto& it : items) {
+        if (it.getProduct().getModel() == s.getProduct().getModel()) {
+            it.addQuantity(s.getQuantity());
+            indexByModel[it.getProduct().getModel()] = static_cast<int>(&it - &items[0]);
+            return;
+        }
+    }
+    items.push_back(s);
+    indexByModel[s.getProduct().getModel()] = static_cast<int>(items.size()-1);
+}
 
-    void addItem(const StocProdus& s);
-    bool removeItemAt(size_t idx);
+bool Inventory::removeItemAt(size_t idx) {
+    if (idx >= items.size()) return false;
+    indexByModel.erase(items[idx].getProduct().getModel());
+    items.erase(items.begin() + static_cast<ptrdiff_t>(idx));
+    indexByModel.clear();
+    for (size_t i = 0; i < items.size(); ++i) indexByModel[items[i].getProduct().getModel()] = static_cast<int>(i);
+    return true;
+}
 
-    size_t size() const;
-    const StocProdus& at(size_t idx) const;
-    StocProdus& at(size_t idx);
+size_t Inventory::size() const { return items.size(); }
+const StocProdus& Inventory::at(size_t idx) const { return items.at(idx); }
+StocProdus& Inventory::at(size_t idx) { return items.at(idx); }
 
-    double calcTotalPotentialProfit() const;
-    std::vector<const StocProdus*> findByBrand(const std::string& brand) const;
-    void sortByPotentialProfitDesc();
-    std::optional<size_t> findIndexByModel(const std::string& model) const;
+double Inventory::calcTotalPotentialProfit() const {
+    double total = 0.0;
+    for (const auto& it : items) {
+        double profitPer = it.pretRevanzarePerBuc() - it.getPretCumpararePerBuc();
+        total += profitPer * it.getQuantity();
+    }
+    return total;
+}
 
-    friend std::ostream& operator<<(std::ostream& os, const Inventory& inv);
-};
+vector<const StocProdus*> Inventory::findByBrand(const string& brand) const {
+    vector<const StocProdus*> res;
+    for (const auto& it : items) if (it.getProduct().getBrand() == brand) res.push_back(&it);
+    return res;
+}
 
+void Inventory::sortByPotentialProfitDesc() {
+    std::sort(items.begin(), items.end(), [](const StocProdus& a, const StocProdus& b) {
+        double pa = (a.pretRevanzarePerBuc() - a.getPretCumpararePerBuc()) * a.getQuantity();
+        double pb = (b.pretRevanzarePerBuc() - b.getPretCumpararePerBuc()) * b.getQuantity();
+        return pa > pb;
+    });
+}
+
+optional<size_t> Inventory::findIndexByModel(const string& model) const {
+    auto it = indexByModel.find(model);
+    if (it == indexByModel.end()) return nullopt;
+    return static_cast<size_t>(it->second);
+}
+
+ostream& operator<<(ostream& os, const Inventory& inv) {
+    os << "Inventar: " << inv.items.size() << " produse\n";
+    for (size_t i = 0; i < inv.items.size(); ++i) os << i+1 << ") " << inv.items[i] << "\n";
+    return os;
+}
