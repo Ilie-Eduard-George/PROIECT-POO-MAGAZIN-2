@@ -1,1 +1,29 @@
+#pragma once
+#include "Product.h"
+#include <string>
+#include <ostream>
+
+class StocProdus {
+private:
+    Product product;
+    int quantity;
+    int pretCumpararePerBuc;
+    std::string culoare;
+public:
+    explicit StocProdus(const Product& product, int quantity, int pretCumpararePerBuc, const std::string& culoare);
+    StocProdus(const StocProdus& other);
+    StocProdus& operator=(const StocProdus& other);
+    ~StocProdus();
+
+    [[nodiscard]] const Product& getProduct() const;
+    [[nodiscard]] int getQuantity() const;
+    [[nodiscard]] int getPretCumpararePerBuc() const;
+    [[nodiscard]] const std::string& getCuloare() const;
+
+    void addQuantity(int q);
+    bool removeQuantity(int q);
+    [[nodiscard]] int pretRevanzarePerBuc() const;
+
+    friend std::ostream& operator<<(std::ostream& os, const StocProdus& s);
+};
 
