@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+LINUX_DEPS=(
+    libgtk-3-dev
+    libxrandr-dev
+    libxcursor-dev
+    libudev-dev
+    libopenal-dev
+    libflac-dev
+    libvorbis-dev
+    libgl1-mesa-dev
+    libegl1-mesa-dev
+    libdrm-dev
+    libgbm-dev
+    libfreetype6-dev
+    libxi-dev
+    xorg
+)
+
+sudo apt-get update
+sudo apt-get install --no-install-recommends "${LINUX_DEPS[@]}"
