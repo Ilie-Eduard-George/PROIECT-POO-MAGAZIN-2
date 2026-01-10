@@ -1,0 +1,2 @@
+/usr/bin/ar qc libmagazin_lib.a CMakeFiles/magazin_lib.dir/src/Product.cpp.o CMakeFiles/magazin_lib.dir/src/Phone.cpp.o CMakeFiles/magazin_lib.dir/src/Tablet.cpp.o CMakeFiles/magazin_lib.dir/src/Laptop.cpp.o CMakeFiles/magazin_lib.dir/src/MarketSimulator.cpp.o CMakeFiles/magazin_lib.dir/src/PricingEngine.cpp.o CMakeFiles/magazin_lib.dir/src/ProductFactory.cpp.o CMakeFiles/magazin_lib.dir/src/Store.cpp.o
+/usr/bin/ranlib libmagazin_lib.a

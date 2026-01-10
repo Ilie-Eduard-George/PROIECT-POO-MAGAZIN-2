@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/magazin.dir/main.cpp.o -o magazin  libmagazin_lib.a 

@@ -1,0 +1,8 @@
+/mnt/data/proiect_work/PROIECT-FINAL-main/build_gh_test/CMakeFiles/magazin_lib.dir
+/mnt/data/proiect_work/PROIECT-FINAL-main/build_gh_test/CMakeFiles/magazin.dir
+/mnt/data/proiect_work/PROIECT-FINAL-main/build_gh_test/CMakeFiles/edit_cache.dir
+/mnt/data/proiect_work/PROIECT-FINAL-main/build_gh_test/CMakeFiles/rebuild_cache.dir
+/mnt/data/proiect_work/PROIECT-FINAL-main/build_gh_test/CMakeFiles/list_install_components.dir
+/mnt/data/proiect_work/PROIECT-FINAL-main/build_gh_test/CMakeFiles/install.dir
+/mnt/data/proiect_work/PROIECT-FINAL-main/build_gh_test/CMakeFiles/install/local.dir
+/mnt/data/proiect_work/PROIECT-FINAL-main/build_gh_test/CMakeFiles/install/strip.dir

@@ -1,0 +1,4 @@
+F:/Descarcari Google/Proiect-Final-Poo-main/cmake-build-debug/CMakeFiles/magazin_lib.dir
+F:/Descarcari Google/Proiect-Final-Poo-main/cmake-build-debug/CMakeFiles/magazin.dir
+F:/Descarcari Google/Proiect-Final-Poo-main/cmake-build-debug/CMakeFiles/edit_cache.dir
+F:/Descarcari Google/Proiect-Final-Poo-main/cmake-build-debug/CMakeFiles/rebuild_cache.dir
